@@ -1,11 +1,71 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SettingsScript : MonoBehaviour
 {
     private GameObject content;
+
+    #region soundEffectsSlider
+
+    private Slider soundEffectsSlider;
+    private void initSoundEffectsSlider()
+    {
+        soundEffectsSlider = transform
+            .Find("Content/Sound/EffectsSlider")
+            .GetComponent<Slider>();
+        GameState.effectsVolume = soundEffectsSlider.value;
+    }
+    public void OnSoundEffectsChanged(System.Single value)
+    {
+        GameState.effectsVolume = value;
+    }
+
+    #endregion
+
+    #region soundAmbientSlider
+
+    private Slider soundAmbientSlider;
+    private void initSoundAmbientSlider()
+    {
+        soundAmbientSlider = transform
+            .Find("Content/Sound/AmbientSlider")
+            .GetComponent<Slider>();
+        GameState.ambientVolume = soundAmbientSlider.value;
+    }
+    public void OnSoundAmbientChanged(System.Single value)
+    {
+        GameState.ambientVolume = value;
+    }
+
+    #endregion
+
+    #region soundsMuteToggle
+
+    private Toggle soundsMuteToggle;
+    private void initSoundsMuteToggle()
+    {
+        soundsMuteToggle = transform
+            .Find("Content/Sound/MuteToggle")
+            .GetComponent<Toggle>();
+        GameState.isSoundsMuted = soundsMuteToggle.isOn;
+    }
+    public void OnSoundsMuteToggle(System.Boolean value)
+    {
+        GameState.isSoundsMuted = value;
+    }
+
+    #endregion
+
     void Start()
     {
-        content = transform.Find("Content").gameObject;
+        initSoundEffectsSlider();
+        initSoundAmbientSlider();
+        initSoundsMuteToggle();
+
+        content = transform
+            .Find("Content")
+            .gameObject;
+
         if (content.activeInHierarchy)
         {
             Time.timeScale = 0.0f;
@@ -20,8 +80,5 @@ public class SettingsScript : MonoBehaviour
             content.SetActive(!content.activeInHierarchy);
         }
     }
-    public void OnSoundEffectsChanged(System.Single value)
-    {
-        GameState.effectsVolume = value;
-    }
+    
 }
