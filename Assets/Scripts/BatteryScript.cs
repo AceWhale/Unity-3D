@@ -4,7 +4,7 @@ public class BatteryScript : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        GameState.Collect("Battery");
+        GameState.Collect(gameObject.name);
         Destroy(gameObject);
     }
 }

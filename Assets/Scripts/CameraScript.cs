@@ -7,7 +7,7 @@ public class CameraScript : MonoBehaviour
     private GameObject cameraPosition3;
     private GameObject character;
     private Vector3 c;
-    private Vector3 cameraAngles;
+    private Vector3 cameraAngles, cameraAngles0;
     private bool isFpv;
     private float sensitivityH = 0.15f;
     private float sensitivityV = -0.08f;
@@ -21,12 +21,13 @@ public class CameraScript : MonoBehaviour
         character = GameObject.Find("Character");
         c = this.transform.position - character.transform.position;
         cameraPosition3 = GameObject.Find("CameraPosition");
-        cameraAngles = this.transform.eulerAngles;
+        cameraAngles0 = cameraAngles = this.transform.eulerAngles;
         isFpv = true;
     }
 
     void Update()
     {
+        if (Time.timeScale == 0.0f) return;
         if (isFpv)
         {
             float wheel = Input.mouseScrollDelta.y;
@@ -59,7 +60,7 @@ public class CameraScript : MonoBehaviour
             this.transform.eulerAngles = cameraAngles;
 
             this.transform.position = character.transform.position +
-                Quaternion.Euler(0, cameraAngles.y, 0) * c;
+                Quaternion.Euler(0, cameraAngles.y - cameraAngles0.y, 0) * c;
         }
         if (Input.GetKeyDown(KeyCode.Tab))
         {
