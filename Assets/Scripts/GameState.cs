@@ -25,7 +25,6 @@ public class GameState
     #endregion
     
     #region ambientVolume
-
     public static float _ambientVolume { get; set; } = 1f;
     public static float ambientVolume
     {
@@ -40,6 +39,22 @@ public class GameState
         }
     }
 
+    #endregion
+
+    #region musicVolume
+    public static float _musicVolume { get; set; } = 1f;
+    public static float musicVolume
+    {
+        get => _musicVolume;
+        set
+        {
+            if (_musicVolume != value)
+            {
+                _musicVolume = value;
+                NotifyListeners(nameof(musicVolume));
+            }
+        }
+    }
     #endregion
 
     #region isSoundsMuted ( muteAll)
@@ -96,6 +111,34 @@ public class GameState
     public static void Collect(String itemName)
     {
         collectSubscribers.ForEach(s => s(itemName));
+    }
+
+    #endregion
+
+    #region eventSubscribers
+    private static Dictionary<String, List<Action<String, object>>> eventSubscribers = new();
+    public static void AddEventListener(Action<String, object> subscriber, string eventName)
+    {
+        if(eventSubscribers.ContainsKey(eventName))
+        {
+            eventSubscribers[eventName].Add(subscriber);
+        }
+        else
+        {
+            eventSubscribers[eventName] = new() { subscriber };
+        }
+    }
+    public static void RemoveEventListener(Action<String, object> subscriber, string eventName)
+    {
+        if (eventSubscribers.ContainsKey(eventName))
+            eventSubscribers[eventName].Remove(subscriber);
+        else UnityEngine.Debug.LogWarning("TriggerEvent: empty key - " + eventName);
+    }
+    public static void TriggerEvent(String eventName, object data)
+    {
+        if (eventSubscribers.ContainsKey(eventName))
+            eventSubscribers[eventName].ForEach(s => s(eventName, data));
+        else UnityEngine.Debug.LogWarning("TriggerEvent: empty key - " + eventName);
     }
 
     #endregion

@@ -26,11 +26,9 @@ public class Gate1Script : MonoBehaviour
     {
         if (collision.gameObject.name == "Character")
         {
-            MessageScript.ShowMessage($"Необхідний ключ №{key}. Продовжуйте пошуки!", author);
+            //MessageScript.ShowMessage($"Необхідний ключ №{key}. Продовжуйте пошуки!", author);
 
-            closedSound.volume = GameState.isSoundsMuted
-            ? 0.0f
-            : GameState.effectsVolume;
+            GameState.TriggerEvent("Gate", new GameEvents.GateEvent { message = $"{author} : Необхідний ключ №{key}. Продовжуйте пошуки!" });
             closedSound.Play();
         }
     }

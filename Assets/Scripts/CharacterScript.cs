@@ -11,7 +11,6 @@ public class CharacterScript : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
     }
 
-    // Update is called once per frame
     void Update()
     {
 

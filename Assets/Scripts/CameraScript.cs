@@ -15,6 +15,9 @@ public class CameraScript : MonoBehaviour
     private float minDistance = 0.0f;
     private float maxDistance = 10.0f;
 
+    private AudioSource dayMusic;
+    private AudioSource nightMusic;
+
     void Start()
     {
         lookAction = InputSystem.actions.FindAction("Look");
@@ -23,6 +26,27 @@ public class CameraScript : MonoBehaviour
         cameraPosition3 = GameObject.Find("CameraPosition");
         cameraAngles0 = cameraAngles = this.transform.eulerAngles;
         isFpv = true;
+
+        AudioSource[] audioSources = GetComponents<AudioSource>();
+        if (audioSources == null || audioSources.Length != 2)
+        {
+            Debug.LogError("LightScript::Start audioSources error");
+        }
+        else
+        {
+            dayMusic = audioSources[0];
+            nightMusic = audioSources[1];
+        }
+
+        SetLightMusic(true);
+
+        GameState.AddChangeListener(
+            OnSoundsVolumeChanged,
+            nameof(GameState.musicVolume));
+
+        GameState.AddChangeListener(
+            OnSoundsVolumeChanged,
+            nameof(GameState.isSoundsMuted));
     }
 
     void Update()
@@ -61,6 +85,10 @@ public class CameraScript : MonoBehaviour
 
             this.transform.position = character.transform.position +
                 Quaternion.Euler(0, cameraAngles.y - cameraAngles0.y, 0) * c;
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                SetLightMusic(GameState.isDay);
+            }
         }
         if (Input.GetKeyDown(KeyCode.Tab))
         {
@@ -70,6 +98,38 @@ public class CameraScript : MonoBehaviour
                 this.transform.rotation = cameraPosition3.transform.rotation;
             }
             isFpv = !isFpv;
+        }
+    }
+
+    private void OnSoundsVolumeChanged(string name)
+    {
+        dayMusic.volume =
+            nightMusic.volume = GameState.isSoundsMuted
+                ? 0.0f
+                : GameState.musicVolume;
+    }
+
+    private void OnDestroy()
+    {
+        GameState.RemoveChangeListener(
+            OnSoundsVolumeChanged,
+            nameof(GameState.musicVolume));
+        GameState.RemoveChangeListener(
+            OnSoundsVolumeChanged,
+            nameof(GameState.musicVolume));
+    }
+
+    private void SetLightMusic(bool day)
+    {
+        if (day)
+        {
+            nightMusic.Stop();
+            dayMusic.Play();
+        }
+        else
+        {
+            dayMusic.Stop();
+            nightMusic.Play();
         }
     }
 }

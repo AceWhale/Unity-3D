@@ -39,6 +39,23 @@ public class SettingsScript : MonoBehaviour
 
     #endregion
 
+    #region soundMusicSlider
+
+    private Slider soundMusicSlider;
+    private void initSoundMusicSlider()
+    {
+        soundMusicSlider = transform
+            .Find("Content/Sound/MusicSlider")
+            .GetComponent<Slider>();
+        GameState.musicVolume = soundMusicSlider.value;
+    }
+    public void OnSoundMusicChanged(System.Single value)
+    {
+        GameState.musicVolume = value;
+    }
+
+    #endregion
+
     #region soundsMuteToggle
 
     private Toggle soundsMuteToggle;
@@ -61,6 +78,7 @@ public class SettingsScript : MonoBehaviour
         initSoundEffectsSlider();
         initSoundAmbientSlider();
         initSoundsMuteToggle();
+        initSoundMusicSlider();
 
         content = transform
             .Find("Content")

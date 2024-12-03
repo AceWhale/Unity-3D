@@ -17,6 +17,9 @@ public class MessageScript : MonoBehaviour
         content = transform.Find("Content").gameObject;
         messageTMP = transform.Find("Content/MessageText").GetComponent<TMPro.TextMeshProUGUI>();
         leftTime = 0;
+
+        GameState.AddEventListener(OnGameEvent, "KeyPoint");
+        GameState.AddEventListener(OnGameEvent, "Gate");
     }
 
     void Update()
@@ -37,6 +40,28 @@ public class MessageScript : MonoBehaviour
             leftTime = message.Timeout ?? timeout;
             content.SetActive(true);
         }
+    }
+
+    private void OnGameEvent(string eventName, object data)
+    {
+        {
+            if (data is GameEvents.KeyPointEvent e)
+            {
+                ShowMessage($"Найден ключ № '{e.keyName}' " + (e.isInTime ? "вовремя" : "не вовремя"));
+            }
+        }
+        {
+            if(data  is GameEvents.GateEvent e)
+            {
+                ShowMessage(e.message);
+            }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        GameState.RemoveEventListener(OnGameEvent, "KeyPoint");
+        GameState.RemoveEventListener(OnGameEvent, "Gate");
     }
     public static void ShowMessage(string messageText, string author = null, float? timeout = null)
     {
