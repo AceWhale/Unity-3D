@@ -4,6 +4,8 @@ public class GameState
 {
     public static bool isDay { get; set; }
     public static bool isFpv { get; set; }
+    public static Dictionary<String, object> collectedItems { get; private set; } = new();
+
     private static List<Action<String>> collectSubscribers = new List<Action<String>>();
 
     #region effectsVolume
@@ -116,29 +118,46 @@ public class GameState
     #endregion
 
     #region eventSubscribers
+    private const string broadcastKey = "Broadcast";
     private static Dictionary<String, List<Action<String, object>>> eventSubscribers = new();
-    public static void AddEventListener(Action<String, object> subscriber, string eventName)
+    public static void AddEventListener(Action<String, object> subscriber, params string[] eventNames)
     {
-        if(eventSubscribers.ContainsKey(eventName))
+        if(eventNames == null || eventNames.Length == 0)
         {
-            eventSubscribers[eventName].Add(subscriber);
+            eventNames = new string[1] { broadcastKey };
         }
-        else
+        foreach (string eventName in eventNames)
         {
-            eventSubscribers[eventName] = new() { subscriber };
+            if (eventSubscribers.ContainsKey(eventName))
+            {
+                eventSubscribers[eventName].Add(subscriber);
+            }
+            else
+            {
+                eventSubscribers[eventName] = new() { subscriber };
+            }
         }
     }
-    public static void RemoveEventListener(Action<String, object> subscriber, string eventName)
+    public static void RemoveEventListener(Action<String, object> subscriber, params string[] eventNames)
     {
-        if (eventSubscribers.ContainsKey(eventName))
-            eventSubscribers[eventName].Remove(subscriber);
-        else UnityEngine.Debug.LogWarning("TriggerEvent: empty key - " + eventName);
+        if (eventNames == null || eventNames.Length == 0)
+        {
+            eventNames = new string[1] { broadcastKey };
+        }
+        foreach (string eventName in eventNames)
+        {
+            if (eventSubscribers.ContainsKey(eventName))
+                eventSubscribers[eventName].Remove(subscriber);
+            else UnityEngine.Debug.LogWarning("EventListener: empty key - " + eventName);
+        }
     }
     public static void TriggerEvent(String eventName, object data)
     {
         if (eventSubscribers.ContainsKey(eventName))
             eventSubscribers[eventName].ForEach(s => s(eventName, data));
-        else UnityEngine.Debug.LogWarning("TriggerEvent: empty key - " + eventName);
+
+        if (eventName != broadcastKey && eventSubscribers.ContainsKey(broadcastKey))
+            eventSubscribers[broadcastKey].ForEach(s => s(eventName, data));
     }
 
     #endregion

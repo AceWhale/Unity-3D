@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class MessageScript : MonoBehaviour
 {
-    private float timeout = 5.0f;
+    private float timeout = 2.0f;
     private float leftTime;
     private GameObject content;
     private TMPro.TextMeshProUGUI messageTMP;
@@ -18,8 +18,7 @@ public class MessageScript : MonoBehaviour
         messageTMP = transform.Find("Content/MessageText").GetComponent<TMPro.TextMeshProUGUI>();
         leftTime = 0;
 
-        GameState.AddEventListener(OnGameEvent, "KeyPoint");
-        GameState.AddEventListener(OnGameEvent, "Gate");
+        GameState.AddEventListener(OnGameEvent);
     }
 
     void Update()
@@ -45,23 +44,17 @@ public class MessageScript : MonoBehaviour
     private void OnGameEvent(string eventName, object data)
     {
         {
-            if (data is GameEvents.KeyPointEvent e)
+            if (data is GameEvents.IMessage m)
             {
-                ShowMessage($"Найден ключ № '{e.keyName}' " + (e.isInTime ? "вовремя" : "не вовремя"));
+                ShowMessage(m.message);
             }
         }
-        {
-            if(data  is GameEvents.GateEvent e)
-            {
-                ShowMessage(e.message);
-            }
-        }
+        
     }
 
     private void OnDestroy()
     {
-        GameState.RemoveEventListener(OnGameEvent, "KeyPoint");
-        GameState.RemoveEventListener(OnGameEvent, "Gate");
+        GameState.RemoveEventListener(OnGameEvent);
     }
     public static void ShowMessage(string messageText, string author = null, float? timeout = null)
     {

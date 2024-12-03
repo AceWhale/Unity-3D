@@ -30,10 +30,12 @@ public class KeyPointScript : MonoBehaviour
     {
         if (other.name == "Character")
         {
+            GameState.collectedItems.Add(keyName, part);
             GameState.TriggerEvent("KeyPoint", new GameEvents.KeyPointEvent
             {
                 keyName = keyName,
-                isInTime = part > 0
+                isInTime = part > 0,
+                message = $"Найден ключ № '{keyName}' " + (part > 0 ? "вовремя" : "не вовремя")
             });
             Destroy(gameObject);
         }
