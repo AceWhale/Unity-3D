@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class KeyPointScript : MonoBehaviour
@@ -7,6 +8,8 @@ public class KeyPointScript : MonoBehaviour
 
     [SerializeField]
     private float timeout = 5.0f;
+    [SerializeField]
+    private int activeRoom = 1;
     private float timeLeft;
 
     public float part => timeLeft / timeout;
@@ -18,7 +21,7 @@ public class KeyPointScript : MonoBehaviour
 
     void Update()
     {
-        if (timeLeft > 0)
+        if (timeLeft > 0 && activeRoom == GameState.room)
         {
             timeLeft -= Time.deltaTime;
             if (timeLeft < 0) { timeLeft = 0; }

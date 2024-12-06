@@ -4,6 +4,7 @@ public class GameState
 {
     public static bool isDay { get; set; }
     public static bool isFpv { get; set; }
+    public static int room { get; set; } = 1;
     public static Dictionary<String, object> collectedItems { get; private set; } = new();
 
     private static List<Action<String>> collectSubscribers = new List<Action<String>>();

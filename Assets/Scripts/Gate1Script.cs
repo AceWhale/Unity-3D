@@ -28,6 +28,11 @@ public class Gate1Script : MonoBehaviour
         {
             timeout -= Time.deltaTime;
             transform.Translate(0, 0, Time.deltaTime / openingTime);
+            if(timeout <= 0.0f)
+            {
+                GameState.room += 1;
+                Debug.Log(GameState.room);
+            }
         }
     }
 
