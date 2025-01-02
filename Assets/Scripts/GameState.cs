@@ -4,7 +4,12 @@ public class GameState
 {
     public static bool isDay { get; set; }
     public static bool isFpv { get; set; }
+    public static float lookSensitivityX { get; set; } = 0.15f;
+    public static float lookSensitivityY { get; set; } = -0.08f;
+    public static float fpvRange { get; set; } = 1.0f;
     public static int room { get; set; } = 1;
+    public static float cameraMinTilt { get; set; } = -30f;
+    public static float cameraMaxTilt { get; set; } = 60f;
     public static Dictionary<String, object> collectedItems { get; private set; } = new();
 
     private static List<Action<String>> collectSubscribers = new List<Action<String>>();
